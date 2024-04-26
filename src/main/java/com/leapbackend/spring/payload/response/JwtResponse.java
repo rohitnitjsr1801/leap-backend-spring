@@ -1,7 +1,13 @@
 package com.leapbackend.spring.payload.response;
 
+import com.leapbackend.spring.enums.Gender;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class JwtResponse {
   private String token;
   private String type = "Bearer";
@@ -10,12 +16,18 @@ public class JwtResponse {
   private String email;
   private List<String> roles;
 
-  public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles) {
+  private Gender gender;
+
+  private int age;
+
+  public JwtResponse(String accessToken, Long id, String username, String email, List<String> roles,Gender gender,int age) {
     this.token = accessToken;
     this.id = id;
     this.username = username;
     this.email = email;
     this.roles = roles;
+    this.age=age;
+    this.gender=gender;
   }
 
   public String getAccessToken() {
