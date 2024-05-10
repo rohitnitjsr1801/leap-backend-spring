@@ -6,6 +6,7 @@ import com.leapbackend.spring.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -17,9 +18,11 @@ public class ProductController {
     ProductServiceImpl productService;
 
     @Autowired
-    JwtUtils jwtUtils; // Inject JwtUtils for token verification
+    JwtUtils jwtUtils;
+
 
     @PostMapping("/product")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product,
                                                  @RequestHeader(name="Authorization") String token) {
         if (token == null || !token.startsWith("Bearer ")) {
@@ -36,6 +39,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
+
         // Token is valid
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.ok(createdProduct);
@@ -48,16 +52,16 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        // Extract JWT token from the Authorization header
+        // Extracting JWT token from the Authorization header
         String jwtToken = token.substring(7);
 
-        // Verify the JWT token
+        // Verifying the JWT token
         if (!jwtUtils.validateJwtToken(jwtToken)) {
             // Token is invalid
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        // Token is valid, proceed with fetching products
+        // Token is valid
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
