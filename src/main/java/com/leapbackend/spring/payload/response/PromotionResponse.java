@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -13,10 +16,12 @@ public class PromotionResponse {
     private Long id;
     private String gender;
     private String ageRange;
-    private Long productId;
+    private List<Long> productIds;
     private String purchaseFrequency;
     private String promotionType;
     private double discountRate;
-    private String startDate;
-    private String endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private int interestedCount;
+    private int buyCount;
 }

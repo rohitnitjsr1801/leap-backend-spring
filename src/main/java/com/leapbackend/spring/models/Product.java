@@ -28,4 +28,9 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "promotion_id")
+    @JsonIgnore
+    private Promotion promotion;
+
 }
