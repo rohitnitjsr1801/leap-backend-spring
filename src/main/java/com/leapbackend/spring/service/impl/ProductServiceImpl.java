@@ -21,7 +21,8 @@ public class ProductServiceImpl implements ProductService {
         List<Product> productList=manager.getProductList();
         productList.add(product);
         manager.setProductList(productList);
-        userRepository.save(manager);
+//        userRepository.save(manager);
+        productRepository.save(product);
         return product;
     }
 
