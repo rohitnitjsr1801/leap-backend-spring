@@ -1,5 +1,6 @@
 package com.leapbackend.spring.security.services;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -14,11 +15,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.leapbackend.spring.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.stereotype.Service;
 
 @Getter
 @Setter
+@Service
 public class UserDetailsImpl implements UserDetails {
+  @Serial
   private static final long serialVersionUID = 1L;
+  public UserDetailsImpl() {
+  }
 
   private Long id;
 
@@ -36,14 +42,12 @@ public class UserDetailsImpl implements UserDetails {
   private Collection<? extends GrantedAuthority> authorities;
 
   public UserDetailsImpl(Long id, String username, String email, String password,
-      Collection<? extends GrantedAuthority> authorities,Gender gender,int age) {
+      Collection<? extends GrantedAuthority> authorities) {
     this.id = id;
     this.username = username;
     this.email = email;
     this.password = password;
     this.authorities = authorities;
-    this.gender=gender;
-    this.age=age;
   }
 
   public static UserDetailsImpl build(User user) {
@@ -56,9 +60,7 @@ public class UserDetailsImpl implements UserDetails {
         user.getUsername(), 
         user.getEmail(),
         user.getPassword(), 
-        authorities,
-        user.getGender(),
-            user.getAge());
+        authorities);
   }
 
   @Override

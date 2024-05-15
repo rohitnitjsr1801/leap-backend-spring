@@ -40,5 +40,21 @@ public class Promotion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    private User manager;
+    private ManagerDetail manager;
+
+    @ManyToMany
+    @JoinTable(
+            name = "customer_interested_promotions",
+            joinColumns = @JoinColumn(name = "promotion_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_details_id")
+    )
+    private List<CustomerDetail> InterestedCustomers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "customer_bought_promotions",
+            joinColumns = @JoinColumn(name = "promotion_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_details_id")
+    )
+    private List<CustomerDetail> BoughtCustomers;
 }

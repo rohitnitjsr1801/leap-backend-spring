@@ -2,6 +2,7 @@ package com.leapbackend.spring.payload.request;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.leapbackend.spring.enums.Gender;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class SignupRequest {
   @NotBlank
   @Size(min = 6, max = 40)
   private String password;
+
+  private String Organization;
 
 //  public String getUsername() {
 //    return username;

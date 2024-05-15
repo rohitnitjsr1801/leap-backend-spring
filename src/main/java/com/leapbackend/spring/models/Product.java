@@ -33,4 +33,9 @@ public class Product {
     @JsonIgnore
     private Promotion promotion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    @JsonIgnore
+    private ManagerDetail manager;
+
 }

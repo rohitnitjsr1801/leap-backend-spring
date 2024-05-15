@@ -1,9 +1,7 @@
 package com.leapbackend.spring.controllers;
 
-import com.leapbackend.spring.models.ERole;
-import com.leapbackend.spring.models.Product;
-import com.leapbackend.spring.models.PurchaseHistory;
-import com.leapbackend.spring.models.User;
+import com.leapbackend.spring.models.*;
+import com.leapbackend.spring.repository.ManagerDetailRepository;
 import com.leapbackend.spring.repository.ProductRepository;
 import com.leapbackend.spring.repository.PurchaseHistoryRepository;
 import com.leapbackend.spring.repository.UserRepository;
@@ -37,6 +35,9 @@ public class ProductController {
 
     @Autowired
     PurchaseHistoryRepository purchaseHistoryRepository;
+
+    @Autowired
+    ManagerDetailRepository managerDetailRepository;
 
     @PostMapping("/product")
     @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
@@ -141,8 +142,9 @@ public class ProductController {
             // Manager with the given ID not found
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
-        List<Product> products = manager.getProductList();
+        Optional<ManagerDetail> response = managerDetailRepository.findByUserId(managerId);
+        ManagerDetail managerDetail = response.get();
+        List<Product> products = productRepository.findAllByManagerId(managerDetail.getId());
         return ResponseEntity.ok(products);
     }
 

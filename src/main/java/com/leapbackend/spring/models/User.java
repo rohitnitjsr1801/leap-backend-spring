@@ -41,18 +41,13 @@ public class User {
   @Size(max = 120)
   private String password;
 
-  private int age;
 
-  Gender gender;
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(  name = "user_roles",
           joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
 
-  @OneToMany(cascade=CascadeType.ALL)
-  @JoinColumn(name="user_id",referencedColumnName = "id")
-  private List<Product> productList=new ArrayList<>();
   public User() {
 
   }
@@ -61,8 +56,6 @@ public class User {
     this.username = username;
     this.email = email;
     this.password = password;
-    this.age=age;
-    this.gender=gender;
   }
 
 
