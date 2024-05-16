@@ -2,9 +2,13 @@ package com.leapbackend.spring.controllers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.leapbackend.spring.models.*;
+import com.leapbackend.spring.repository.CustomerDetailRepository;
+import com.leapbackend.spring.repository.ManagerDetailRepository;
 import com.leapbackend.spring.repository.RoleRepository;
 import com.leapbackend.spring.repository.UserRepository;
 import com.leapbackend.spring.security.services.UserDetailsImpl;
@@ -23,9 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.leapbackend.spring.models.ERole;
-import com.leapbackend.spring.models.Role;
-import com.leapbackend.spring.models.User;
 import com.leapbackend.spring.payload.request.LoginRequest;
 import com.leapbackend.spring.payload.request.SignupRequest;
 import com.leapbackend.spring.payload.response.JwtResponse;
@@ -50,6 +51,12 @@ public class AuthController {
 
   @Autowired
   JwtUtils jwtUtils;
+
+  @Autowired
+  CustomerDetailRepository customerDetailRepository;
+
+  @Autowired
+  ManagerDetailRepository managerDetailRepository;
 
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -109,24 +116,41 @@ public class AuthController {
             Role adminRole = roleRepository.findByName(ERole.ROLE_OWNER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(adminRole);
-
+            user.setRoles(roles);
+            User response = userRepository.save(user);
+            ManagerDetail managerDetail = new ManagerDetail();
+            managerDetail.setUser(user);
+            managerDetail.setOrganization(signUpRequest.getOrganization());
+            managerDetailRepository.save(managerDetail);
             break;
           case "manager":
             Role modRole = roleRepository.findByName(ERole.ROLE_MANAGER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(modRole);
-
+            user.setRoles(roles);
+            User response2 = userRepository.save(user);
+            ManagerDetail managerDetail2 = new ManagerDetail();
+            managerDetail2.setUser(user);
+            managerDetail2.setOrganization(signUpRequest.getOrganization());
+            managerDetailRepository.save(managerDetail2);
             break;
           default:
             Role userRole = roleRepository.findByName(ERole.ROLE_CUSTOMER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
+            user.setRoles(roles);
+            User response3 = userRepository.save(user);
+            CustomerDetail customerDetail = new CustomerDetail();
+            customerDetail.setUser(user);
+            customerDetail.setAge(signUpRequest.getAge());
+            customerDetail.setGender(signUpRequest.getGender());
+            customerDetailRepository.save(customerDetail);
         }
       });
     }
 
-    user.setRoles(roles);
-    userRepository.save(user);
+//    user.setRoles(roles);
+//    userRepository.save(user);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
   }
