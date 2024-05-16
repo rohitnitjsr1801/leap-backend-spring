@@ -4,9 +4,7 @@ import com.leapbackend.spring.enums.AgeRange;
 import com.leapbackend.spring.enums.Gender;
 import com.leapbackend.spring.enums.PurchaseFrequency;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,7 +13,10 @@ import java.util.List;
 @Table(name = "promotion")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

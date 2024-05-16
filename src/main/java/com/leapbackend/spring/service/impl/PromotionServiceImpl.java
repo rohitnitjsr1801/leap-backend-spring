@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PromotionServiceImpl implements PromotionService {
@@ -39,8 +40,29 @@ public class PromotionServiceImpl implements PromotionService {
             productList.add(product);
         }
         promotion.setProducts(productList);
-        promotionRepository.save(promotion);
+        Promotion SavedPromotion = promotionRepository.save(promotion);
 
-        return PromotionTransformer.promotionToPromotionResponse(promotion);
+        return PromotionTransformer.promotionToPromotionResponse(SavedPromotion);
+    }
+
+    public PromotionResponse updatePromotion(Long id, PromotionRequest promotionRequest) {
+        Optional<Promotion> promotionOptional = promotionRepository.findById(id);
+        if (promotionOptional.isPresent()) {
+            Promotion promotion = promotionOptional.get();
+            ManagerDetail managerDetail = managerDetailRepository.findByUserId(promotionRequest.getManagerId()).orElse(null);
+            if (managerDetail == null) {
+                return null;
+            }
+            PromotionTransformer.updatePromotionFromRequest(promotion, promotionRequest, managerDetail);
+            Promotion updatedPromotion = promotionRepository.save(promotion);
+            return PromotionTransformer.promotionToPromotionResponse(updatedPromotion);
+        } else {
+            return null;
+        }
+    }
+
+    public PromotionResponse getPromotion(Long id) {
+        Optional<Promotion> promotionOptional = promotionRepository.findById(id);
+        return promotionOptional.map(PromotionTransformer::promotionToPromotionResponse).orElse(null);
     }
 }

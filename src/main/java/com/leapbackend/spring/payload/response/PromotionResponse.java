@@ -1,5 +1,7 @@
 package com.leapbackend.spring.payload.response;
 
+
+import com.leapbackend.spring.models.Product;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,4 +18,5 @@ public class PromotionResponse {
     private double discountRate;
     private LocalDate startDate;
     private LocalDate endDate;
+    private List<Product> products;
 }
