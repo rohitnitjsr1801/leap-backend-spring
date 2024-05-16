@@ -1,6 +1,10 @@
 package com.leapbackend.spring.models;
 
+import com.leapbackend.spring.enums.AgeRange;
+import com.leapbackend.spring.enums.Gender;
+import com.leapbackend.spring.enums.PurchaseFrequency;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,20 +15,20 @@ import java.util.List;
 @Table(name = "promotion")
 @Getter
 @Setter
+@Builder
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String gender;
+    private Gender gender;
 
-    private String ageRange;
+    private AgeRange ageRange;
 
     @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
-
-    private String purchaseFrequency;
+    private PurchaseFrequency purchaseFrequency;
 
     private String promotionType;
 
