@@ -56,8 +56,7 @@ public class PromotionServiceImpl implements PromotionService {
             return new ArrayList<>();
         }
         ManagerDetail ownerDetail=managerDetail.get();
-        List<Promotion> promotion=promotionRepository.findByManagerAndPromotionstatus(ownerDetail,promotionStatus.NOT_APPROVED);
-        return promotion;
+        return promotionRepository.findUnapprovedPromotionsByOrganization(ownerDetail.getOrganization(), promotionStatus.NOT_APPROVED);
     }
 
     public ResponseEntity<String> approvePromotion(Long promotionId)
