@@ -1,8 +1,10 @@
 package com.leapbackend.spring.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.leapbackend.spring.enums.AgeRange;
 import com.leapbackend.spring.enums.Gender;
 import com.leapbackend.spring.enums.PurchaseFrequency;
+import com.leapbackend.spring.enums.promotionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,8 +45,11 @@ public class Promotion {
 
     private int buyCount;
 
+    private promotionStatus promotionstatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
+    @JsonIgnore
     private ManagerDetail manager;
 
     @ManyToMany
