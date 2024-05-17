@@ -9,5 +9,6 @@ import java.util.List;
 public interface ProductService {
     Product createProduct(Product product, User manager);
     List<Product> getAllProducts();
-    // Other service methods for updating, deleting, and getting a single product
+    Product updateProduct(Long productId, Product product, User manager);
+    void deleteProduct(Long id);
 }

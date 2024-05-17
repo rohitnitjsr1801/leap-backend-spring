@@ -199,5 +199,53 @@ public class ProductController {
         return ResponseEntity.ok(purchasedProducts);
     }
 
+    @PutMapping("/product/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<String> updateProduct(@PathVariable Long id,
+                                                @Valid @RequestBody Product product,
+                                                @RequestHeader(name = "Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is missing or invalid");
+        }
+
+        String jwtToken = token.substring(7);
+
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+        }
+
+        String username = jwtUtils.getUserNameFromJwtToken(jwtToken);
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        User manager = userOptional.get();
+        Product updatedProduct = productService.updateProduct(id, product, manager);
+        if (updatedProduct != null) {
+            return ResponseEntity.ok("Product updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found");
+        }
+    }
+
+    @DeleteMapping("/product/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id,
+                                                @RequestHeader(name = "Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is missing or invalid");
+        }
+
+        String jwtToken = token.substring(7);
+
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token is invalid");
+        }
+
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully");
+    }
+
 }
 

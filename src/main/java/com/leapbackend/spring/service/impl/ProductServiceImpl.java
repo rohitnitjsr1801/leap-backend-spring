@@ -44,4 +44,23 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll();
     }
 
+    public Product updateProduct(Long id, Product updatedProduct, User manager) {
+        Optional<Product> existingProductOpt = productRepository.findById(id);
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setImageUrl(updatedProduct.getImageUrl());
+            existingProduct.setPromotion(updatedProduct.getPromotion());
+            productRepository.save(existingProduct);
+            return existingProduct;
+        } else {
+            return null;
+        }
+    }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
 }
