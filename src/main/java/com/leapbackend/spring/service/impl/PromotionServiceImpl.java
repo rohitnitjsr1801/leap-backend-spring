@@ -1,11 +1,13 @@
 package com.leapbackend.spring.service.impl;
 
 import com.leapbackend.spring.enums.promotionStatus;
+import com.leapbackend.spring.models.CustomerDetail;
 import com.leapbackend.spring.models.ManagerDetail;
 import com.leapbackend.spring.models.Product;
 import com.leapbackend.spring.models.Promotion;
 import com.leapbackend.spring.payload.request.PromotionRequest;
 import com.leapbackend.spring.payload.response.PromotionResponse;
+import com.leapbackend.spring.repository.CustomerDetailRepository;
 import com.leapbackend.spring.repository.ManagerDetailRepository;
 import com.leapbackend.spring.repository.ProductRepository;
 import com.leapbackend.spring.repository.PromotionRepository;
@@ -30,6 +32,9 @@ public class PromotionServiceImpl implements PromotionService {
     ManagerDetailRepository managerDetailRepository;
 
     @Autowired
+    CustomerDetailRepository customerDetailRepository;
+
+    @Autowired
     ProductRepository productRepository;
 
     public PromotionResponse createPromotion(PromotionRequest promotionRequest) {
@@ -48,6 +53,31 @@ public class PromotionServiceImpl implements PromotionService {
 
         return PromotionTransformer.promotionToPromotionResponse(SavedPromotion);
     }
+
+    public ResponseEntity<String> buyPromotion(Long promotionId, Long customerId) {
+        Promotion promotion = promotionRepository.findById(promotionId).get();
+        CustomerDetail customerDetail = customerDetailRepository.findByUserId(customerId).get();
+
+        promotion.setBuyCount(promotion.getBuyCount() + 1);
+        promotion.getBoughtCustomers().add(customerDetail);
+        customerDetail.getBoughtPromotions().add(promotion);
+        customerDetailRepository.save(customerDetail);
+
+        return ResponseEntity.ok("Promotion bought successfully!");
+    }
+
+    public ResponseEntity<String> interestedForPromotion(Long promotionId, Long customerId) {
+        Promotion promotion = promotionRepository.findById(promotionId).get();
+        CustomerDetail customerDetail = customerDetailRepository.findByUserId(customerId).get();
+
+        promotion.setInterestedCount(promotion.getInterestedCount() + 1);
+        promotion.getInterestedCustomers().add(customerDetail);
+        customerDetail.getInterestedPromotions().add(promotion);
+        customerDetailRepository.save(customerDetail);
+
+        return ResponseEntity.ok("Promotion marked as interested, successfully!");
+    }
+
     public List<Promotion> getPromotionList(Long id)
     {
         Optional<ManagerDetail> managerDetail=managerDetailRepository.findByUserId(id);

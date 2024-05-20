@@ -16,10 +16,10 @@ public class CustomerDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(mappedBy = "InterestedCustomers")
+    @ManyToMany(mappedBy = "InterestedCustomers", cascade = CascadeType.ALL)
     private List<Promotion> InterestedPromotions;
 
-    @ManyToMany(mappedBy = "BoughtCustomers")
+    @ManyToMany(mappedBy = "BoughtCustomers", cascade = CascadeType.ALL)
     private List<Promotion> BoughtPromotions;
 
     private Gender gender;
