@@ -1,5 +1,6 @@
 package com.leapbackend.spring.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.leapbackend.spring.enums.Category;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -15,6 +16,9 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "Category")
+    private Category category;
 
     @Column(name = "name")
     private String name;
