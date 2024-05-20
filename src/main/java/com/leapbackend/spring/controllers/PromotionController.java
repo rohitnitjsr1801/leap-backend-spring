@@ -66,6 +66,52 @@ public class PromotionController {
         }
     }
 
+    @PutMapping("/buy")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> buyPromotion(@RequestParam("promotion_id") Long promotionId,
+                                                          @RequestParam("customer_id") Long customerId,
+                                                          @RequestHeader(name="Authorization") String token) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return promotionService.buyPromotion(promotionId, customerId);
+    }
+
+    @PutMapping("/interested")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> interestedPromotion(@RequestParam("promotion_id") Long promotionId,
+                                                          @RequestParam("customer_id") Long customerId,
+                                                          @RequestHeader(name="Authorization") String token) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return promotionService.interestedForPromotion(promotionId, customerId);
+    }
+
     @PutMapping("/approve/{promotionId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> updatePromotionStatus(@PathVariable Long promotionId,

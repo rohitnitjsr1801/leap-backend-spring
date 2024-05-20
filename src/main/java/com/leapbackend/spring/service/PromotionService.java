@@ -17,4 +17,8 @@ public interface PromotionService {
     List<Promotion> getPromotionList(Long id);
 
     ResponseEntity<String> approvePromotion(Long promotionId);
+
+    ResponseEntity<String> buyPromotion(Long promotionId, Long customerId);
+
+    ResponseEntity<String> interestedForPromotion(Long promotionId, Long customerId);
 }
