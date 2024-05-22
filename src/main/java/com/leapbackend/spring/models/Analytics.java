@@ -15,15 +15,22 @@ public class Analytics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "promotion_id", nullable = false)
+//    private Promotion promotion;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "promotion_id", nullable = false)
-    private Promotion promotion;
+    @JoinColumn(name = "manager_id", nullable = false)
+    private ManagerDetail manager;
 
     @Column(name = "conv_rate")
     private double convRate;
 
-    @Column(name = "revenue")
-    private double revenue;
+    @Column(name = "pre_revenue")
+    private double preRevenue;
+
+    @Column(name = "post_revenue")
+    private double postRevenue;
 
     @Column(name = "pre_interactions")
     private int preInteractions;
