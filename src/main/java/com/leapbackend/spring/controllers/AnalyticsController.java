@@ -42,6 +42,7 @@ public class AnalyticsController {
         }
 
         Analytics analytics = analyticsService.getAnalyticsById(id);
+        System.out.println(analytics.getId()+" "+analytics.getConvRate());
         if (analytics != null) {
             return ResponseEntity.ok(analytics);
         } else {

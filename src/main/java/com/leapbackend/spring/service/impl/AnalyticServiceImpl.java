@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AnalyticServiceImpl implements AnalyticsService {
@@ -69,7 +70,13 @@ public class AnalyticServiceImpl implements AnalyticsService {
 
     @Override
     public Analytics getAnalyticsById(Long id) {
-        return analyticsRepository.findById(id).orElseThrow();
+
+        Optional<Analytics> analyticsOptional=analyticsRepository.findById(id);
+        if(analyticsOptional.isEmpty())
+        {
+            return null;
+        }
+        return analyticsOptional.get();
     }
 
     @Override
