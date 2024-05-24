@@ -5,4 +5,5 @@ import com.leapbackend.spring.models.OrganizationAnalytics;
 public interface OrganizationAnalyticsService {
     OrganizationAnalytics createOrganizationAnalytics();
 
+    void updateOrganizationAnalytics();
 }

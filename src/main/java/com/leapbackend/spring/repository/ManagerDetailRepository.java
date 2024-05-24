@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ManagerDetailRepository extends JpaRepository<ManagerDetail,Long> {
     Optional<ManagerDetail> findByUserId(Long userId);
+
 }

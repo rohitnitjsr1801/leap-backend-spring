@@ -44,4 +44,29 @@ public class OrganizationAnalyticsServiceImpl implements OrganizationAnalyticsSe
         return null; // This method can be improved to return meaningful data if required
     }
 
+    @Override
+    public void updateOrganizationAnalytics() {
+        List<OrganizationAnalytics> organizationAnalyticsList = organizationAnalyticsRepository.findAll();
+
+        List<Analytics> allAnalytics = analyticsRepository.findAll();
+
+        Map<String, Double> organizationRevenueMap = allAnalytics.stream()
+                .collect(Collectors.groupingBy(
+                        analytics -> analytics.getManager().getOrganization(),
+                        Collectors.summingDouble(analytics -> analytics.getPreRevenue() + analytics.getPostRevenue())
+                ));
+
+        for (OrganizationAnalytics organizationAnalytics : organizationAnalyticsList) {
+            String organizationName = organizationAnalytics.getOrganizationName();
+            Double totalRevenue = organizationRevenueMap.get(organizationName);
+
+            if (totalRevenue != null) {
+                organizationAnalytics.setTotalRevenue(totalRevenue);
+                organizationAnalytics.setLastUpdated(LocalDateTime.now());
+
+                organizationAnalyticsRepository.save(organizationAnalytics);
+            }
+        }
+    }
 }
+

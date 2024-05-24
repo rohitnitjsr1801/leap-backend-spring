@@ -31,6 +31,17 @@ public class OrganizationAnalyticsController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Organization Analytics created");
     }
 
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<String> updateOrganizationAnalytics(@RequestHeader(name="Authorization") String token) {
+        ResponseEntity<Void> tokenValidationResponse = validateToken(token);
+        if (tokenValidationResponse != null) {
+            return new ResponseEntity<>(tokenValidationResponse.getStatusCode());
+        }
+
+        organizationAnalyticsService.updateOrganizationAnalytics();
+        return ResponseEntity.status(HttpStatus.OK).body("Organization Analytics updated");
+    }
 
 
     private ResponseEntity<Void> validateToken(String token) {
