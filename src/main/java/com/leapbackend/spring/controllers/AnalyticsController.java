@@ -61,6 +61,19 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsList);
     }
 
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<Analytics> updateAnalytics(@PathVariable Long id, @RequestHeader(name="Authorization") String token) {
+        ResponseEntity<Void> tokenValidationResponse = validateToken(token);
+        if (tokenValidationResponse != null) {
+            return new ResponseEntity<>(null, tokenValidationResponse.getStatusCode());
+        }
+
+        Analytics updated = analyticsService.updateAnalytics(id);
+        return ResponseEntity.ok(updated);
+    }
+
+
     private ResponseEntity<Void> validateToken(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             // Token is missing or invalid
@@ -78,4 +91,7 @@ public class AnalyticsController {
 
         return null; // Token is valid
     }
+
+
+
 }

@@ -84,6 +84,45 @@ public class AnalyticServiceImpl implements AnalyticsService {
         return analyticsRepository.findAll();
     }
 
+    @Override
+    public Analytics updateAnalytics(Long id) {
+        Analytics existingAnalytics = analyticsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Analytics not found with id " + id));
+
+        Long managerId = existingAnalytics.getManager().getId();
+
+        Double pre_Revenue = promotionRepository.findTotalRevenueByManagerBeforePromotion(managerId);
+        double preRevenue = (pre_Revenue != null) ? pre_Revenue : 0.0;
+
+        Double post_Revenue = promotionRepository.findTotalRevenueByManagerAndCategory(managerId);
+        double postRevenue = (post_Revenue != null) ? post_Revenue : 0.0;
+
+        double convRate = calculateConvRate(managerId);
+
+        existingAnalytics.setPreRevenue(preRevenue);
+        existingAnalytics.setPostRevenue(postRevenue);
+        existingAnalytics.setConvRate(convRate);
+
+        int preInteractions = 0;
+        Integer preInteractionsResult = purchaseHistoryRepository.countInteractionsBeforePromotion(managerId);
+        if (preInteractionsResult != null) {
+            preInteractions = preInteractionsResult;
+        }
+
+        int postInteractions = 0;
+        Integer postInteractionsResult = promotionRepository.countBoughtCustomersByManager(managerId);
+        if (postInteractionsResult != null) {
+            postInteractions = postInteractionsResult;
+        }
+
+        existingAnalytics.setPreInteractions(preInteractions);
+        existingAnalytics.setPostInteractions(postInteractions);
+
+        existingAnalytics.setLastUpdated(LocalDateTime.now());
+
+        return analyticsRepository.save(existingAnalytics);
+    }
+
     private double calculateConvRate(Long managerId) {
         int interestedCount = promotionRepository.countInterestedCustomersByManager(managerId);
         int boughtCount = promotionRepository.countBoughtCustomersByManager(managerId);

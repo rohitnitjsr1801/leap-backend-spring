@@ -7,4 +7,6 @@ public interface AnalyticsService {
     Analytics createAnalytics(Long managerId);
     Analytics getAnalyticsById(Long id);
     List<Analytics> getAllAnalytics();
+
+    Analytics updateAnalytics(Long id);
 }
