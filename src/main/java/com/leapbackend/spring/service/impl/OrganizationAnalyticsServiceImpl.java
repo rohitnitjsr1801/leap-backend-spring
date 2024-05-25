@@ -41,7 +41,7 @@ public class OrganizationAnalyticsServiceImpl implements OrganizationAnalyticsSe
             organizationAnalyticsRepository.save(organizationAnalytics);
         });
 
-        return null; // This method can be improved to return meaningful data if required
+        return null;
     }
 
     @Override
