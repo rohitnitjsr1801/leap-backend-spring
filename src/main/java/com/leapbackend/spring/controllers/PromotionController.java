@@ -21,6 +21,7 @@ import com.leapbackend.spring.security.jwt.JwtUtils;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/promotion")
 public class PromotionController {
