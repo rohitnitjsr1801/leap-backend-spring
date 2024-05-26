@@ -136,7 +136,7 @@ public class PromotionController {
     }
 
     @GetMapping("ownerPromotions/{id}")
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
     public ResponseEntity<Object> getPromotionOfOwner(@PathVariable Long id,
                                                           @RequestHeader(name="Authorization") String token) {
 
