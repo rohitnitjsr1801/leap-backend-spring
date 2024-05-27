@@ -119,6 +119,31 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/getProductByProductId")
+    public ResponseEntity<Product> getProductByProductId(@RequestParam Long id,@RequestHeader(name="Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Token is valid
+        Optional<Product> productOptional=productRepository.findById(id);
+        if(productOptional.isEmpty())
+        {
+            return null;
+        }
+        return ResponseEntity.ok(productOptional.get());
+    }
+
     @GetMapping("/getProductById")
     @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
     public ResponseEntity<Object> getProducts(@RequestParam Long managerId,
