@@ -22,8 +22,11 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     Double findTotalRevenueByManagerBeforePromotion(Long managerId);
 
 
-    @Query("SELECT SUM(p.price) FROM Product p JOIN p.promotion pr JOIN pr.manager m WHERE m.id = :managerId GROUP BY p.category")
-    Double findTotalRevenueByManagerAndCategory(Long managerId);
+//    @Query("SELECT SUM(p.price) FROM Product p JOIN p.promotion pr JOIN pr.manager m WHERE m.id = :managerId GROUP BY p.category")
+//    Double findTotalRevenueByManagerAndCategory(Long managerId);
+
+    @Query("SELECT SUM(p.price * (1 - pr.discountRate / 100.0)) FROM Product p JOIN p.promotion pr JOIN pr.manager m WHERE m.id = :managerId")
+    Double findTotalDiscountedRevenueByManager(Long managerId);
 
     @Query("SELECT COUNT(ic) FROM Promotion p JOIN p.InterestedCustomers ic WHERE p.manager.id = :managerId")
     int countInterestedCustomersByManager(Long managerId);

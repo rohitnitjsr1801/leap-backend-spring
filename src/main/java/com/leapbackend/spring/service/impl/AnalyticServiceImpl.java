@@ -37,7 +37,7 @@ public class AnalyticServiceImpl implements AnalyticsService {
         Double pre_Revenue = promotionRepository.findTotalRevenueByManagerBeforePromotion(managerId);
         double preRevenue = (pre_Revenue != null) ? pre_Revenue : 0.0;
 
-        Double post_Revenue = promotionRepository.findTotalRevenueByManagerAndCategory(managerId);
+        Double post_Revenue = promotionRepository.findTotalDiscountedRevenueByManager(managerId);
         double postRevenue = (post_Revenue != null) ? post_Revenue : 0.0;
 
         double convRate = calculateConvRate(managerId);
@@ -94,7 +94,7 @@ public class AnalyticServiceImpl implements AnalyticsService {
         Double pre_Revenue = promotionRepository.findTotalRevenueByManagerBeforePromotion(managerId);
         double preRevenue = (pre_Revenue != null) ? pre_Revenue : 0.0;
 
-        Double post_Revenue = promotionRepository.findTotalRevenueByManagerAndCategory(managerId);
+        Double post_Revenue = promotionRepository.findTotalDiscountedRevenueByManager(managerId);
         double postRevenue = (post_Revenue != null) ? post_Revenue : 0.0;
 
         double convRate = calculateConvRate(managerId);
