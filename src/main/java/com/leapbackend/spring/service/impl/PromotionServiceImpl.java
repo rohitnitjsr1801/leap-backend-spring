@@ -78,6 +78,13 @@ public class PromotionServiceImpl implements PromotionService {
         return ResponseEntity.ok("Promotion marked as interested, successfully!");
     }
 
+    public PromotionResponse getPromotionByProductId(Long productId) {
+        Product product = productRepository.findById(productId).get();
+        if(product.getPromotion() != null && product.getPromotion().getPromotionstatus() == promotionStatus.APPROVED)
+            return PromotionTransformer.promotionToPromotionResponse(product.getPromotion());
+        return null;
+    }
+
     public List<Promotion> getPromotionList(Long id)
     {
         Optional<ManagerDetail> managerDetail=managerDetailRepository.findByUserId(id);
