@@ -21,6 +21,8 @@ import com.leapbackend.spring.security.jwt.JwtUtils;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/promotion")
@@ -70,8 +72,8 @@ public class PromotionController {
     @PutMapping("/buy")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<String> buyPromotion(@RequestParam("promotion_id") Long promotionId,
-                                                          @RequestParam("customer_id") Long customerId,
-                                                          @RequestHeader(name="Authorization") String token) {
+                                               @RequestParam("customer_id") Long customerId,
+                                               @RequestHeader(name="Authorization") String token) {
 
         if (token == null || !token.startsWith("Bearer ")) {
             // Token is missing or invalid
@@ -214,7 +216,32 @@ public class PromotionController {
         }
     }
 
+    @GetMapping
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<PromotionResponse> getPromotionByProduct(@RequestParam("product_id") Long productId,
+                                                           @RequestHeader(name="Authorization") String token) {
 
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        PromotionResponse response = promotionService.getPromotionByProductId(productId);
+        if (response != null) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
 
 }
