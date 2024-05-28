@@ -151,7 +151,7 @@ public class PromotionController {
         AgeRange age2=promotion.getAgeRange();
         Gender gender2=promotion.getGender();
         double discount=promotion.getDiscountRate();
-        if(gender1.equals(gender2))
+        if(gender1.equals(gender2)&&promotion.getPromotionstatus().equals(promotionStatus.APPROVED))
         {
             if(age2.equals(AgeRange.ADULT))
             {
