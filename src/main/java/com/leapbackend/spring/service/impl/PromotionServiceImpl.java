@@ -54,6 +54,11 @@ public class PromotionServiceImpl implements PromotionService {
         return PromotionTransformer.promotionToPromotionResponse(SavedPromotion);
     }
 
+    public ResponseEntity<String> deletePromotion(Long promotionId) {
+        promotionRepository.deleteById(promotionId);
+        return ResponseEntity.ok("Promotion deleted successfully!");
+    }
+
     public ResponseEntity<String> buyPromotion(Long promotionId, Long customerId) {
         Promotion promotion = promotionRepository.findById(promotionId).get();
         CustomerDetail customerDetail = customerDetailRepository.findByUserId(customerId).get();
@@ -125,8 +130,8 @@ public class PromotionServiceImpl implements PromotionService {
         }
     }
 
-    public PromotionResponse getPromotion(Long id) {
+    public Promotion getPromotion(Long id) {
         Optional<Promotion> promotionOptional = promotionRepository.findById(id);
-        return promotionOptional.map(PromotionTransformer::promotionToPromotionResponse).orElse(null);
+        return promotionOptional.get();
     }
 }

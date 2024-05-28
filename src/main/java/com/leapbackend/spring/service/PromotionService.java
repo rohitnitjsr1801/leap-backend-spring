@@ -12,7 +12,7 @@ public interface PromotionService {
 
     PromotionResponse updatePromotion(Long id, PromotionRequest request);
 
-    PromotionResponse getPromotion(Long id);
+    Promotion getPromotion(Long id);
 
     List<Promotion> getPromotionList(Long id);
 
@@ -23,4 +23,6 @@ public interface PromotionService {
     ResponseEntity<String> interestedForPromotion(Long promotionId, Long customerId);
 
     PromotionResponse getPromotionByProductId(Long productId);
+
+    ResponseEntity<String> deletePromotion(Long promotionId);
 }

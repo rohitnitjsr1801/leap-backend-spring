@@ -69,6 +69,27 @@ public class PromotionController {
         }
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<String> deletePromotion(@RequestParam ("promotion_id") Long promotionId,
+                                                  @RequestHeader(name="Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return promotionService.deletePromotion(promotionId);
+    }
+
     @PutMapping("/buy")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<String> buyPromotion(@RequestParam("promotion_id") Long promotionId,
@@ -191,7 +212,7 @@ public class PromotionController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
-    public ResponseEntity<PromotionResponse> getPromotion(@PathVariable Long id,
+    public ResponseEntity<Promotion> getPromotion(@PathVariable Long id,
                                                           @RequestHeader(name="Authorization") String token) {
 
         if (token == null || !token.startsWith("Bearer ")) {
@@ -208,7 +229,7 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        PromotionResponse response = promotionService.getPromotion(id);
+        Promotion response = promotionService.getPromotion(id);
         if (response != null) {
             return ResponseEntity.ok(response);
         } else {
