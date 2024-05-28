@@ -53,6 +53,7 @@ public class Promotion {
     private ManagerDetail manager;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "customer_interested_promotions",
             joinColumns = @JoinColumn(name = "promotion_id"),
@@ -61,6 +62,7 @@ public class Promotion {
     private List<CustomerDetail> InterestedCustomers;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "customer_bought_promotions",
             joinColumns = @JoinColumn(name = "promotion_id"),

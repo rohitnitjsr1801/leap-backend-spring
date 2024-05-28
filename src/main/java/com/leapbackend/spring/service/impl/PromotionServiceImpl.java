@@ -62,7 +62,6 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.getBoughtCustomers().add(customerDetail);
         customerDetail.getBoughtPromotions().add(promotion);
         customerDetailRepository.save(customerDetail);
-
         return ResponseEntity.ok("Promotion bought successfully!");
     }
 
