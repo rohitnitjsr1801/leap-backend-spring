@@ -348,6 +348,12 @@ public class PromotionController {
             @PathVariable Long customerId,
             @RequestHeader(name = "Authorization") String token) {
 
+        Optional<CustomerDetail> customerDetailOptional = customerDetailRepository.findByUserId(customerId);
+        if (!customerDetailOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Long userId = customerDetailOptional.get().getId();
+
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -358,7 +364,7 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        List<ProductDetailResponse> products = promotionService.getInterestedPromotions(customerId);
+        List<ProductDetailResponse> products = promotionService.getInterestedPromotions(userId);
         return ResponseEntity.ok(products);
     }
 
@@ -368,6 +374,12 @@ public class PromotionController {
             @PathVariable Long customerId,
             @RequestHeader(name = "Authorization") String token) {
 
+        Optional<CustomerDetail> customerDetailOptional = customerDetailRepository.findByUserId(customerId);
+        if (!customerDetailOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Long userId = customerDetailOptional.get().getId();
+
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -378,7 +390,7 @@ public class PromotionController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        List<ProductDetailResponse> products = promotionService.getBoughtPromotions(customerId);
+        List<ProductDetailResponse> products = promotionService.getBoughtPromotions(userId);
         return ResponseEntity.ok(products);
     }
 
