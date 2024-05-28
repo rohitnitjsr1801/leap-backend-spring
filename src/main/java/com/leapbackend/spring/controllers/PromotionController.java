@@ -1,15 +1,20 @@
 package com.leapbackend.spring.controllers;
 
+import com.leapbackend.spring.enums.AgeRange;
+import com.leapbackend.spring.enums.Gender;
 import com.leapbackend.spring.enums.promotionStatus;
+import com.leapbackend.spring.models.CustomerDetail;
 import com.leapbackend.spring.models.ManagerDetail;
 import com.leapbackend.spring.models.Promotion;
 import com.leapbackend.spring.models.User;
 import com.leapbackend.spring.payload.request.PromotionRequest;
 import com.leapbackend.spring.payload.response.PromotionResponse;
+import com.leapbackend.spring.repository.CustomerDetailRepository;
 import com.leapbackend.spring.repository.ManagerDetailRepository;
 import com.leapbackend.spring.repository.PromotionRepository;
 import com.leapbackend.spring.repository.UserRepository;
 import com.leapbackend.spring.service.PromotionService;
+import com.leapbackend.spring.service.transformer.PromotionTransformer;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +43,9 @@ public class PromotionController {
 
     @Autowired
     private ManagerDetailRepository managerDetailRepository;
+
+    @Autowired
+    private CustomerDetailRepository customerDetailRepository;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -111,6 +119,75 @@ public class PromotionController {
         }
 
         return promotionService.buyPromotion(promotionId, customerId);
+    }
+
+
+    @GetMapping("/checkIfPromotionApplicableForCustomer")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> checkIfPromotionApplicable(@RequestParam("promotion_id") Long promotionId,
+                                               @RequestParam("customer_id") Long customerId,
+                                               @RequestHeader(name="Authorization") String token) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            // Token is missing or invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        // Extracting JWT token from the Authorization header
+        String jwtToken = token.substring(7);
+
+        // Verifying the JWT token
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            // Token is invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        Optional<CustomerDetail> customerDetailOptional=customerDetailRepository.findByUserId(customerId);
+        CustomerDetail customerDetail=customerDetailOptional.get();
+        int age1=customerDetail.getAge();
+        Gender gender1=customerDetail.getGender();
+        Optional<Promotion> promotionOptional=promotionRepository.findById(promotionId);
+        Promotion promotion=promotionOptional.get();
+        AgeRange age2=promotion.getAgeRange();
+        Gender gender2=promotion.getGender();
+        double discount=promotion.getDiscountRate();
+        if(gender1.equals(gender2))
+        {
+            if(age2.equals(AgeRange.ADULT))
+            {
+                if(age1>=18&&age1<=24)
+                {
+                    return ResponseEntity.ok(""+discount);
+                }
+            }
+            else if(age2.equals(AgeRange.OLD))
+            {
+                if(age1>=40)
+                {
+                    return ResponseEntity.ok(""+discount);
+                }
+            }
+            else if(age2.equals(AgeRange.TEEN))
+            {
+                if(age1>=10&&age1<18)
+                {
+                    return ResponseEntity.ok(""+discount);
+                }
+            }
+            else if(age2.equals(AgeRange.CHILDREN))
+            {
+                if(age1>0&&age1<10)
+                {
+                    return ResponseEntity.ok(""+discount);
+                }
+            }
+            else if(age2.equals(AgeRange.YOUNG_ADULT)) {
+                if (age1 > 24 && age1 < 40) {
+                    return ResponseEntity.ok("" + discount);
+                }
+            }
+
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
     @PutMapping("/interested")
