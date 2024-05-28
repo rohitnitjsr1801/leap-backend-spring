@@ -8,6 +8,7 @@ import com.leapbackend.spring.models.ManagerDetail;
 import com.leapbackend.spring.models.Promotion;
 import com.leapbackend.spring.models.User;
 import com.leapbackend.spring.payload.request.PromotionRequest;
+import com.leapbackend.spring.payload.response.ProductDetailResponse;
 import com.leapbackend.spring.payload.response.PromotionResponse;
 import com.leapbackend.spring.repository.CustomerDetailRepository;
 import com.leapbackend.spring.repository.ManagerDetailRepository;
@@ -339,6 +340,46 @@ public class PromotionController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping("/interested/{customerId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<ProductDetailResponse>> getInterestedPromotions(
+            @PathVariable Long customerId,
+            @RequestHeader(name = "Authorization") String token) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String jwtToken = token.substring(7);
+
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        List<ProductDetailResponse> products = promotionService.getInterestedPromotions(customerId);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/bought/{customerId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<ProductDetailResponse>> getBoughtPromotions(
+            @PathVariable Long customerId,
+            @RequestHeader(name = "Authorization") String token) {
+
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String jwtToken = token.substring(7);
+
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        List<ProductDetailResponse> products = promotionService.getBoughtPromotions(customerId);
+        return ResponseEntity.ok(products);
     }
 
 

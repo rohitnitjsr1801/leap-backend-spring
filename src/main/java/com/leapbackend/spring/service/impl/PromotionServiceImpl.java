@@ -6,6 +6,7 @@ import com.leapbackend.spring.models.ManagerDetail;
 import com.leapbackend.spring.models.Product;
 import com.leapbackend.spring.models.Promotion;
 import com.leapbackend.spring.payload.request.PromotionRequest;
+import com.leapbackend.spring.payload.response.ProductDetailResponse;
 import com.leapbackend.spring.payload.response.PromotionResponse;
 import com.leapbackend.spring.repository.CustomerDetailRepository;
 import com.leapbackend.spring.repository.ManagerDetailRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PromotionServiceImpl implements PromotionService {
@@ -133,5 +135,33 @@ public class PromotionServiceImpl implements PromotionService {
     public Promotion getPromotion(Long id) {
         Optional<Promotion> promotionOptional = promotionRepository.findById(id);
         return promotionOptional.get();
+    }
+
+    @Override
+    public List<ProductDetailResponse> getInterestedPromotions(Long customerId) {
+        List<Promotion> promotions = customerDetailRepository.findInterestedPromotionsByCustomerId(customerId);
+        return promotions.stream()
+                .flatMap(promotion -> promotion.getProducts().stream()
+                        .map(product -> mapToProductDetailResponse(product, promotion.getDiscountRate())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDetailResponse> getBoughtPromotions(Long customerId) {
+        List<Promotion> promotions = customerDetailRepository.findBoughtPromotionsByCustomerId(customerId);
+        return promotions.stream()
+                .flatMap(promotion -> promotion.getProducts().stream()
+                        .map(product -> mapToProductDetailResponse(product, promotion.getDiscountRate())))
+                .collect(Collectors.toList());
+    }
+
+    private ProductDetailResponse mapToProductDetailResponse(Product product, double discountRate) {
+        ProductDetailResponse response = new ProductDetailResponse();
+        response.setName(product.getName());
+        response.setDescription(product.getDescription());
+        response.setCategory(product.getCategory().name());
+        double discountedPrice = product.getPrice() - (product.getPrice() * discountRate / 100);
+        response.setPrice(discountedPrice);
+        return response;
     }
 }

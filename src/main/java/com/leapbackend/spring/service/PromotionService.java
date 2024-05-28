@@ -2,6 +2,7 @@ package com.leapbackend.spring.service;
 
 import com.leapbackend.spring.models.Promotion;
 import com.leapbackend.spring.payload.request.PromotionRequest;
+import com.leapbackend.spring.payload.response.ProductDetailResponse;
 import com.leapbackend.spring.payload.response.PromotionResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -25,4 +26,9 @@ public interface PromotionService {
     PromotionResponse getPromotionByProductId(Long productId);
 
     ResponseEntity<String> deletePromotion(Long promotionId);
+
+
+    List<ProductDetailResponse> getInterestedPromotions(Long customerId);
+
+    List<ProductDetailResponse> getBoughtPromotions(Long customerId);
 }
