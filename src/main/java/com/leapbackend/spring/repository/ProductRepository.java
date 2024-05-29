@@ -14,4 +14,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.manager.id = :managerId")
     List<Product> findAllByManagerId(@Param("managerId") Long managerId);
+
+    @Query("SELECT p FROM Product p WHERE p.manager.Organization = :organization")
+    List<Product> findProductsByOrganization(@Param("organization") String organization);
 }

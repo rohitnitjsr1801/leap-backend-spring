@@ -63,4 +63,9 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
+
+    public List<Product> getProductsByOrganization(Long ownerId) {
+        ManagerDetail ownerDetail = managerDetailRepository.findByUserId(ownerId).get();
+        return productRepository.findProductsByOrganization(ownerDetail.getOrganization());
+    }
 }
