@@ -1,6 +1,9 @@
 package com.leapbackend.spring.controllers;
 
 import com.leapbackend.spring.models.Analytics;
+import com.leapbackend.spring.models.CustomerDetail;
+import com.leapbackend.spring.models.ManagerDetail;
+import com.leapbackend.spring.repository.ManagerDetailRepository;
 import com.leapbackend.spring.security.jwt.JwtUtils;
 import com.leapbackend.spring.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -20,17 +24,26 @@ public class AnalyticsController {
     private AnalyticsService analyticsService;
 
     @Autowired
+    private ManagerDetailRepository managerDetailRepository;
+
+
+    @Autowired
     JwtUtils jwtUtils;
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
     public ResponseEntity<String> createAnalytics(@RequestParam("manager_id") Long managerId, @RequestHeader(name="Authorization") String token) {
+        Optional<ManagerDetail> ManagerDetailOptional = managerDetailRepository.findByUserId(managerId);
+        if (!ManagerDetailOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Long userId = ManagerDetailOptional.get().getId();
         ResponseEntity<Void> tokenValidationResponse = validateToken(token);
         if (tokenValidationResponse != null) {
             return new ResponseEntity<>(tokenValidationResponse.getStatusCode());
         }
 
-        analyticsService.createAnalytics(managerId);
+        analyticsService.createAnalytics(userId);
         return ResponseEntity.status(HttpStatus.CREATED).body("Analytics created");
     }
 
