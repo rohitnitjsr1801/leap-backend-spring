@@ -6,6 +6,7 @@ import com.leapbackend.spring.repository.ProductRepository;
 import com.leapbackend.spring.repository.PurchaseHistoryRepository;
 import com.leapbackend.spring.repository.UserRepository;
 import com.leapbackend.spring.security.jwt.JwtUtils;
+import com.leapbackend.spring.service.ProductService;
 import com.leapbackend.spring.service.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class ProductController {
     @Autowired
-    ProductServiceImpl productService;
+    ProductService productService;
 
     @Autowired
     UserRepository userRepository;
@@ -300,6 +301,23 @@ public class ProductController {
 
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
+    }
+
+    @GetMapping("/products")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<List<Product>> getProductsForOwner(@RequestParam ("owner_id") Long ownerId,
+                                                             @RequestHeader(name = "Authorization") String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String jwtToken = token.substring(7);
+
+        if (!jwtUtils.validateJwtToken(jwtToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return ResponseEntity.ok(productService.getProductsByOrganization(ownerId));
     }
 
 }
