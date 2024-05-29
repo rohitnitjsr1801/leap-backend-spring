@@ -28,7 +28,7 @@ public class Promotion {
 
     private AgeRange ageRange;
 
-    @OneToMany(mappedBy = "promotion", orphanRemoval = true)
+    @OneToMany(mappedBy = "promotion", cascade = CascadeType.PERSIST)
     private List<Product> products;
 
     private PurchaseFrequency purchaseFrequency;

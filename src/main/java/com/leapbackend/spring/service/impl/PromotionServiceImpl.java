@@ -57,6 +57,16 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     public ResponseEntity<String> deletePromotion(Long promotionId) {
+        Optional<Promotion> promotionOptional = promotionRepository.findById(promotionId);
+        if (promotionOptional.isPresent()) {
+            Promotion promotion = promotionOptional.get();
+            for(Product product: promotion.getProducts()) {
+                product.setPromotion(null);
+                productRepository.save(product);
+            }
+        } else {
+            return null;
+        }
         promotionRepository.deleteById(promotionId);
         return ResponseEntity.ok("Promotion deleted successfully!");
     }
@@ -124,7 +134,20 @@ public class PromotionServiceImpl implements PromotionService {
             if (managerDetail == null) {
                 return null;
             }
-            PromotionTransformer.updatePromotionFromRequest(promotion, promotionRequest, managerDetail);
+            for(Product product: promotion.getProducts()) {
+                product.setPromotion(null);
+                productRepository.save(product);
+            }
+            List<Product> productList = new ArrayList<>();
+            for(Long productId: promotionRequest.getProductIds()) {
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                if(optionalProduct.isEmpty())
+                    return null;
+                Product product = optionalProduct.get();
+                product.setPromotion(promotion);
+                productList.add(product);
+            }
+            PromotionTransformer.updatePromotionFromRequest(promotion, promotionRequest, managerDetail, productList);
             Promotion updatedPromotion = promotionRepository.save(promotion);
             return PromotionTransformer.promotionToPromotionResponse(updatedPromotion);
         } else {
