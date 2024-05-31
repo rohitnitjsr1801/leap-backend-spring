@@ -106,6 +106,24 @@ public class AnalyticsController {
         return null; // Token is valid
     }
 
+    @GetMapping("/generate")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('OWNER')")
+    public ResponseEntity<Analytics> generateOrGetAnalytics(@RequestParam("manager_id") Long managerId, @RequestHeader(name="Authorization") String token) {
+        ResponseEntity<Void> tokenValidationResponse = validateToken(token);
+        if (tokenValidationResponse != null) {
+            return new ResponseEntity<>(null, tokenValidationResponse.getStatusCode());
+        }
+
+        Analytics existingAnalytics = analyticsService.findAnalyticsByManagerId(managerId);
+        if (existingAnalytics != null) {
+            return ResponseEntity.ok(existingAnalytics);
+        } else {
+            Analytics newAnalytics = analyticsService.createAnalytics(managerId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newAnalytics);
+        }
+    }
+
+
 
 
 }

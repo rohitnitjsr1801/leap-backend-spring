@@ -123,6 +123,15 @@ public class AnalyticServiceImpl implements AnalyticsService {
         return analyticsRepository.save(existingAnalytics);
     }
 
+    @Override
+    public Analytics findAnalyticsByManagerId(Long managerId) {
+        Optional<Analytics> optionalAnalytics = analyticsRepository.findByManager_Id(managerId);
+        if(optionalAnalytics.isPresent()){
+            return optionalAnalytics.get();
+        }
+        return null;
+    }
+
     private double calculateConvRate(Long managerId) {
         int interestedCount = promotionRepository.countInterestedCustomersByManager(managerId);
         int boughtCount = promotionRepository.countBoughtCustomersByManager(managerId);
