@@ -74,6 +74,7 @@ public class ProductController {
                                            @RequestHeader(name="Authorization") String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             // Token is missing or invalid
+            System.out.println(token);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
@@ -100,20 +101,20 @@ public class ProductController {
 
 
     @GetMapping("/getProducts")
-    public ResponseEntity<Object> getAllProducts(@RequestHeader(name="Authorization") String token) {
-        if (token == null || !token.startsWith("Bearer ")) {
-            // Token is missing or invalid
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        // Extracting JWT token from the Authorization header
-        String jwtToken = token.substring(7);
-
-        // Verifying the JWT token
-        if (!jwtUtils.validateJwtToken(jwtToken)) {
-            // Token is invalid
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+    public ResponseEntity<Object> getAllProducts() {
+//        if (token == null || !token.startsWith("Bearer ")) {
+//            // Token is missing or invalid
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
+//
+//        // Extracting JWT token from the Authorization header
+//        String jwtToken = token.substring(7);
+//
+//        // Verifying the JWT token
+//        if (!jwtUtils.validateJwtToken(jwtToken)) {
+//            // Token is invalid
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
 
         // Token is valid
         List<Product> products = productService.getAllProducts();
